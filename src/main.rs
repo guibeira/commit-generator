@@ -66,7 +66,7 @@ fn check_ollama_installed() -> anyhow::Result<()> {
 
 fn get_staged_files() -> anyhow::Result<Vec<String>> {
     let output = std::process::Command::new("git")
-        .args(["diff", "--cached"])
+        .args(["diff", "--staged", "--cached"])
         .output()?;
     let s = String::from_utf8(output.stdout)?;
     Ok(s.lines().map(|l| l.to_string()).collect())
