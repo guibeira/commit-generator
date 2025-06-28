@@ -1,0 +1,11 @@
+[package]
+name = "commit_generator"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ollama-rs = "0.3.2"         
+dialoguer = "0.10"         
+anyhow = "1.0"
+tokio = { version = "1", features = ["full", "macros", "rt-multi-thread"] }
+clap = { version = "4.5.40", features = ["derive"] }
