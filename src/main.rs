@@ -1,4 +1,5 @@
 use clap::Parser;
+use indicatif::{ProgressBar, ProgressStyle};
 use ollama_rs::{Ollama, generation::completion::request::GenerationRequest};
 use std::fs;
 
@@ -92,9 +93,17 @@ async fn main() -> anyhow::Result<()> {
 
     // 3. Loop for suggestions until user approves or cancels
     loop {
+        let spinner = ProgressBar::new_spinner();
+        spinner.set_style(
+            ProgressStyle::default_spinner()
+                .template("{spinner:.blue} Generating commit message...")
+                .unwrap(),
+        );
+        spinner.enable_steady_tick(std::time::Duration::from_millis(100));
         let res = ollama
             .generate(GenerationRequest::new(args.model.clone(), prompt.clone()))
             .await;
+        spinner.finish_and_clear();
 
         match res {
             Ok(res) => {
