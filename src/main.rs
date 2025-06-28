@@ -5,20 +5,35 @@ use std::fs;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    #[arg(short, long, default_value = "llama3:latest")]
+    #[arg(short, long, default_value = "gemma3:latest")]
     model: String,
 }
 
 fn get_prompt_template() -> String {
     let default_template =
-        "Generate a clear, single-line git commit message for the following staged files.
+        "Action: Generate a clear, single-line git commit message for the following staged files.
+            Staged files:
+            {}
+
             - Follow the conventional commit style (e.g., feat, fix, refactor, docs).
             - Describe the intent of the changes (what and why, not how).
             - Use only the information available from the file names.
             - Respond with only the commit message, no extra text.
+            - Do not return any other information.
 
+            **Example 1**
             Staged files:
-            {}";
+            - src/user/profile.ts
+            - src/components/Avatar.tsx
+
+            Commit Message:
+            feat: add user profile page and avatar component
+
+            now generate a commit message for the following staged files:
+            Staged files:
+            {}
+
+            DO NOT RETURN ANYTHING ELSE, ONLY THE COMMIT MESSAGE.";
 
     if let Ok(home) = std::env::var("HOME") {
         let mut config_path = std::path::PathBuf::from(home);
