@@ -1,7 +1,8 @@
 # Commit Generator
 
 A command-line tool to automatically generate Git commit messages for your staged files using local Large Language Models (LLMs) via Ollama.
-
+## Demo
+![Demo cli running](https://github.com/guibeira/commit-generator/blob/main/demo.gif "Demo cli running")
 ## Features
 
 -   **AI-Powered Commits**: Generates clear and conventional commit messages based on your staged file changes.
