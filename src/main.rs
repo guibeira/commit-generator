@@ -2,6 +2,7 @@ use clap::Parser;
 use indicatif::{ProgressBar, ProgressStyle};
 use ollama_rs::{Ollama, generation::completion::request::GenerationRequest};
 use std::fs;
+use url::Url;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -88,8 +89,23 @@ async fn main() -> anyhow::Result<()> {
     // 2. Build prompt for LLM
     let prompt_template = get_prompt_template();
     let prompt = prompt_template.replace("{}", &files.join("\n"));
-
-    let ollama = Ollama::default(); // connects via http://localhost:11434 :contentReference[oaicite:3]{index=3}
+    let ollama_url_str =
+        std::env::var("OLLAMA_URL").unwrap_or_else(|_| "http://localhost:11434".to_string());
+    let ollama = match Url::parse(&ollama_url_str) {
+        Ok(url) => {
+            let host = format!(
+                "{}://{}",
+                url.scheme(),
+                url.host_str().unwrap_or("localhost")
+            );
+            let port = url.port().unwrap_or(11434);
+            Ollama::new(host, port)
+        }
+        Err(_) => {
+            // Fallback to default if URL is malformed
+            Ollama::new("http://localhost".to_string(), 11434)
+        }
+    };
 
     // 3. Loop for suggestions until user approves or cancels
     loop {
